@@ -17,15 +17,18 @@ package com.squareup.wire;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import org.fest.util.Files;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class WireCompilerTest {
 
@@ -128,6 +131,19 @@ public class WireCompilerTest {
       assertFilesMatch(testDir, output);
     }
   }
+
+  private void compileProtoWithMessageEmitters(String[] sources, String[] outputs,
+      String emitterNames) throws Exception {
+    int numFlags = 3;
+    String[] args = new String[numFlags + sources.length];
+    args[0] = "--proto_path=../wire-runtime/src/test/proto";
+    args[1] = "--java_out=" + testDir.getAbsolutePath();
+    args[2] = "--emitters=" + emitterNames;
+    System.arraycopy(sources, 0, args, numFlags, sources.length);
+
+    WireCompiler.main(args);
+  }
+
 
   @Test public void testPerson() throws Exception {
     String[] sources = {
@@ -368,6 +384,21 @@ public class WireCompilerTest {
     String roots = "squareup.protos.roots.I";
     testProtoWithRoots(sources, roots, outputs);
   }
+
+  @Test public void testMessageEmitters() throws Exception {
+    String[] sources = {
+        "simple_message.proto",
+    };
+    String[] outputs = {
+        "com/squareup/wire/protos/simple/SimpleMessage.java",
+    };
+    String emitters = "com.squareup.wire.WireTestMessageEmitter";
+    compileProtoWithMessageEmitters(sources, outputs, emitters);
+
+    File output = new File(testDir.getAbsolutePath() + File.separator + outputs[0]);
+    String written = Files.contentOf(output, Charset.defaultCharset());
+    assertTrue(written.contains(WireTestMessageEmitter.BUILD_EMITTER_STRING));
+   }
 
   @Test public void sanitizeJavadocStripsTrailingWhitespace() {
     String input = "The quick brown fox  \nJumps over  \n\t \t\nThe lazy dog  ";

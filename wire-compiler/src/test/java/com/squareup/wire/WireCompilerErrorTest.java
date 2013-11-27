@@ -77,8 +77,15 @@ public class WireCompilerErrorTest {
   private Map<String, String> compile(String source) {
     StringIO io = new StringIO("test.proto", source);
 
-    WireCompiler compiler = new WireCompiler(".", Arrays.asList("test.proto"),
-        new ArrayList<String>(), ".", null, true, io);
+    WireCompiler compiler;
+    try {
+      compiler = new WireCompiler(".", Arrays.asList("test.proto"),
+        new ArrayList<String>(), ".", null, true, new ArrayList<String>(), io);
+    } catch (Exception e) {
+      fail();
+      return null;
+    }
+
     try {
       compiler.compile();
     } catch (IOException e) {
