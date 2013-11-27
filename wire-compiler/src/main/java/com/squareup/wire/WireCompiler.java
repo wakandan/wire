@@ -157,7 +157,8 @@ public class WireCompiler {
       } else if (args[index].equals(NO_OPTIONS_FLAG)) {
         emitOptions = false;
       } else if (args[index].startsWith(EMITTERS_FLAG)) {
-        emitterNames.addAll(Arrays.asList(args[index].substring(EMITTERS_FLAG.length()).split(",")));
+        emitterNames.addAll(
+            Arrays.asList(args[index].substring(EMITTERS_FLAG.length()).split(",")));
       } else {
         sourceFileNames.add(args[index]);
       }
@@ -174,7 +175,7 @@ public class WireCompiler {
 
     WireCompiler wireCompiler;
     try {
-       wireCompiler = new WireCompiler(protoPath, sourceFileNames, roots, javaOut,
+      wireCompiler = new WireCompiler(protoPath, sourceFileNames, roots, javaOut,
           registryClass, emitOptions, emitterNames);
     } catch (Exception e) {
       System.err.println(e.getMessage());
@@ -187,16 +188,14 @@ public class WireCompiler {
 
   public WireCompiler(String protoPath, List<String> sourceFileNames, List<String> roots,
       String outputDirectory, String registryClass, boolean emitOptions, List<String> emitterNames)
-      throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-      IllegalArgumentException {
+      throws ClassNotFoundException, IllegalAccessException, InstantiationException {
     this(protoPath, sourceFileNames, roots, outputDirectory, registryClass, emitOptions,
         emitterNames, new IO.FileIO());
   }
 
   WireCompiler(String protoPath, List<String> sourceFileNames, List<String> roots,
       String outputDirectory, String registryClass, boolean emitOptions, List<String> emitterNames,
-      IO io) throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-      IllegalArgumentException {
+      IO io) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
     this.repoPath = protoPath;
     this.typesToEmit.addAll(roots);
     this.sourceFileNames = sourceFileNames;
@@ -208,8 +207,7 @@ public class WireCompiler {
   }
 
   private List<MessageEmitter> getEmitters(List<String> emitterNames)
-      throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-      IllegalArgumentException {
+      throws ClassNotFoundException, IllegalAccessException, InstantiationException {
     List<MessageEmitter> result = new ArrayList<MessageEmitter>();
     for (String name : emitterNames) {
       Class emitterClass = Class.forName(name);
@@ -217,7 +215,7 @@ public class WireCompiler {
         throw new IllegalArgumentException(name + " is not a " + MessageEmitter.class.getName());
       }
 
-      result.add((MessageEmitter)emitterClass.newInstance());
+      result.add((MessageEmitter) emitterClass.newInstance());
     }
 
     return result;
@@ -336,8 +334,8 @@ public class WireCompiler {
   }
 
   /**
-   * Returns true if the given fully-qualified name (with a .proto package name)
-   * refers to an .proto enumerated type.
+   * Returns true if the given fully-qualified name (with a .proto package name) refers to an .proto
+   * enumerated type.
    */
   boolean isEnum(String type) {
     return enumTypes.contains(type);
@@ -537,7 +535,7 @@ public class WireCompiler {
 
   private String removeTrailingSegment(String name) {
     int index = name.lastIndexOf('.');
-    return index == -1 ? "" :  name.substring(0, index);
+    return index == -1 ? "" : name.substring(0, index);
   }
 
   public String getTypeBeingGenerated() {
@@ -754,11 +752,11 @@ public class WireCompiler {
           optionsMap = optionsMapMaker.createMessageOptionsMap((MessageType) type);
           optionsMapMaker.getOptionTypes(optionsMap, externalTypes);
 
-            for (Field field : ((MessageType) type).getFields()) {
-              Map<String, ?> fieldOptionsMap =
-                  optionsMapMaker.createFieldOptionsMap((MessageType) type, field.getOptions());
-              optionsMapMaker.getOptionTypes(fieldOptionsMap, externalTypes);
-            }
+          for (Field field : ((MessageType) type).getFields()) {
+            Map<String, ?> fieldOptionsMap =
+                optionsMapMaker.createFieldOptionsMap((MessageType) type, field.getOptions());
+            optionsMapMaker.getOptionTypes(fieldOptionsMap, externalTypes);
+          }
         }
       }
       imports.addAll(externalTypes);
@@ -957,8 +955,10 @@ public class WireCompiler {
 
   private String getLabelString(Field field, boolean isEnum) {
     switch (field.getLabel()) {
-      case OPTIONAL: return "Optional";
-      case REQUIRED: return "Required";
+      case OPTIONAL:
+        return "Optional";
+      case REQUIRED:
+        return "Required";
       case REPEATED:
         return FieldInfo.isPacked(field, isEnum) ? "Packed" : "Repeated";
       default:
