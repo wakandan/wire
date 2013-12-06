@@ -397,6 +397,8 @@ public class WireCompilerTest {
 
     File output = new File(testDir.getAbsolutePath() + File.separator + outputs[0]);
     String written = Files.contentOf(output, Charset.defaultCharset());
+
+    assertTrue(written.contains(WireTestMessageEmitter.IMPORT_EMITTER_STRING));
     assertTrue(written.contains(WireTestMessageEmitter.BUILD_EMITTER_STRING));
    }
 

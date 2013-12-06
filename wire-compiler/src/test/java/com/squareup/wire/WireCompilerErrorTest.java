@@ -77,10 +77,15 @@ public class WireCompilerErrorTest {
   private Map<String, String> compile(String source) {
     StringIO io = new StringIO("test.proto", source);
 
+    WireCompilerOptions options = new WireCompilerOptions.Builder()
+        .setProtoPath(".")
+        .setSourceFileNames(Arrays.asList("test.proto"))
+        .setOutputDirectory(".")
+        .setEmitOptions(true)
+        .setIo(io).build();
     WireCompiler compiler;
     try {
-      compiler = new WireCompiler(".", Arrays.asList("test.proto"),
-        new ArrayList<String>(), ".", null, true, new ArrayList<String>(), io);
+      compiler = new WireCompiler(options);
     } catch (Exception e) {
       fail();
       return null;

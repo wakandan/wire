@@ -68,8 +68,14 @@ public class MessageWriter {
   }
 
   public void emitHeader(Set<String> imports,
-      Collection<Message.Datatype> datatypes, Collection<Message.Label> labels) throws IOException {
+      Collection<Message.Datatype> datatypes, Collection<Message.Label> labels,
+      Map<String, ?> optionsMap,
+      List<MessageEmitter> emitters) throws IOException {
     writer.emitImports(imports);
+    System.out.println(emitters);
+    for (MessageEmitter emitter : emitters) {
+      emitter.emitImports(writer, optionsMap);
+    }
 
     if (!datatypes.isEmpty() || !labels.isEmpty()) {
       writer.emitEmptyLine();
