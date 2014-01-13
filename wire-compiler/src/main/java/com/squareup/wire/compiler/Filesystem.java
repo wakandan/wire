@@ -1,11 +1,13 @@
-package com.squareup.wire.parser;
+package com.squareup.wire.compiler;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 
-interface Filesystem {
+/** A simple abstraction of a filesystem to facilitate testing. */
+public interface Filesystem {
   /** Equivalent to {@link File#exists()}. */
   boolean exists(File file);
 
@@ -20,6 +22,9 @@ interface Filesystem {
 
   /** Read the entire contents of a file as UTF-8 to a String. */
   String contentsUtf8(File file) throws IOException;
+
+  /** Create a content writer for the supplied file. */
+  Writer writerUtf8(File file) throws IOException;
 
   /** A {@link Filesystem} which uses normal storage. */
   Filesystem SYSTEM = new Filesystem() {
@@ -41,6 +46,10 @@ interface Filesystem {
 
     @Override public String contentsUtf8(File file) throws IOException {
       return Files.toString(file, Charsets.UTF_8);
+    }
+
+    @Override public Writer writerUtf8(File file) throws IOException {
+      return Files.newWriter(file, Charsets.UTF_8);
     }
   };
 }

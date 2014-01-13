@@ -1,6 +1,7 @@
-package com.squareup.wire.plugin;
+package com.squareup.wire.compiler.plugin;
 
 import com.squareup.protoparser.ProtoFile;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -9,5 +10,5 @@ public interface WirePlugin {
   void parseArgs(List<String> args);
 
   /** TODO describe me! */
-  void run(Set<ProtoFile> protoFiles);
+  void run(Set<ProtoFile> protoFiles) throws IOException;
 }

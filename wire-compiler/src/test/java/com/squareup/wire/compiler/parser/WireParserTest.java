@@ -1,8 +1,9 @@
-package com.squareup.wire.parser;
+package com.squareup.wire.compiler.parser;
 
 import com.google.common.collect.ImmutableSet;
 import com.squareup.protoparser.ProtoFile;
 import com.squareup.protoparser.ProtoSchemaParser;
+import com.squareup.wire.compiler.InMemoryFilesystem;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;

@@ -1,8 +1,10 @@
-package com.squareup.wire.parser;
+package com.squareup.wire.compiler;
 
 import com.google.common.collect.Sets;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -14,7 +16,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 /** A {@link Filesystem} representation which exists only in memory. */
-final class InMemoryFilesystem implements Filesystem {
+public final class InMemoryFilesystem implements Filesystem {
   private static final String ROOT = "/";
 
   private final Folder root;
@@ -69,6 +71,14 @@ final class InMemoryFilesystem implements Filesystem {
 
   @Override public String contentsUtf8(File file) throws IOException {
     return fileOf(file);
+  }
+
+  @Override public Writer writerUtf8(final File file) throws IOException {
+    return new StringWriter() {
+      @Override public void close() throws IOException {
+        addFile(file.getPath(), toString());
+      }
+    };
   }
 
   private String fileOf(File file) {

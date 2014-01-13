@@ -1,9 +1,9 @@
-package com.squareup.wire.cli;
+package com.squareup.wire.compiler;
 
 import com.squareup.protoparser.ProtoFile;
-import com.squareup.wire.parser.WireParser;
-import com.squareup.wire.plugin.WirePlugin;
-import com.squareup.wire.plugin.java.WireJavaPlugin;
+import com.squareup.wire.compiler.parser.WireParser;
+import com.squareup.wire.compiler.plugin.WirePlugin;
+import com.squareup.wire.compiler.plugin.java.WireJavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
