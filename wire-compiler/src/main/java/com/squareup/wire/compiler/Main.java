@@ -68,7 +68,7 @@ public final class Main {
 
     for (WirePlugin plugin : ServiceLoader.load(WirePlugin.class)) {
       System.out.print("Running " + plugin.getClass().getSimpleName() + "... ");
-      plugin.generate(fs, data);
+      plugin.generate(data);
       System.out.println("Done.");
     }
   }

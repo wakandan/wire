@@ -3,17 +3,17 @@ package com.squareup.wire.compiler.parser;
 import com.google.common.collect.ImmutableSet;
 import com.squareup.protoparser.EnumType;
 import com.squareup.protoparser.ExtendDeclaration;
-import com.squareup.protoparser.Extensions;
 import com.squareup.protoparser.MessageType;
-import com.squareup.protoparser.Option;
 import com.squareup.protoparser.Service;
 import com.squareup.protoparser.Type;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 
 import static com.squareup.protoparser.MessageType.Label.REQUIRED;
+import static com.squareup.wire.compiler.TestUtil.NO_EXTENSIONS;
+import static com.squareup.wire.compiler.TestUtil.NO_OPTIONS;
+import static com.squareup.wire.compiler.TestUtil.NO_TYPES;
 import static com.squareup.wire.compiler.parser.ProtoQualifier.fullyQualifyExtendDeclaration;
 import static com.squareup.wire.compiler.parser.ProtoQualifier.fullyQualifyService;
 import static com.squareup.wire.compiler.parser.ProtoQualifier.fullyQualifyType;
@@ -23,10 +23,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.fail;
 
 public class ProtoQualifierTest {
-  private static final List<Option> NO_OPTIONS = Collections.emptyList();
-  private static final List<Extensions> NO_EXTENSIONS = Collections.emptyList();
-  private static final List<Type> NO_TYPES = Collections.emptyList();
-
   @Test public void resolvePrimitivesAreReturned() {
     Set<String> allTypes = Collections.emptySet();
     assertThat(resolveType(allTypes, "foo.Bar", "bool")).isEqualTo("bool");

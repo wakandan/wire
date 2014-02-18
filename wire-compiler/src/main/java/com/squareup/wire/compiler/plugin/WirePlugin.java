@@ -1,15 +1,14 @@
 package com.squareup.wire.compiler.plugin;
 
 import com.squareup.protoparser.ProtoFile;
-import java.nio.file.FileSystem;
+import java.io.IOException;
 import java.util.Set;
 
 public interface WirePlugin {
   /**
    * TODO describe me!
    *
-   * @param fs The file system to use for writing generated files.
    * @param protoFiles The filtered types to generate.
    */
-  void generate(FileSystem fs, Set<ProtoFile> protoFiles);
+  void generate(Set<ProtoFile> protoFiles) throws IOException;
 }

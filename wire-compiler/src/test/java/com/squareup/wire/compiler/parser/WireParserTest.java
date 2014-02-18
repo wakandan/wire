@@ -3,6 +3,7 @@ package com.squareup.wire.compiler.parser;
 import com.google.common.collect.ImmutableSet;
 import com.squareup.protoparser.ProtoFile;
 import com.squareup.protoparser.ProtoSchemaParser;
+import com.squareup.wire.compiler.FileSystemRule;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -190,7 +191,10 @@ public class WireParserTest {
 
   private void addFile(Path path, String content) throws IOException {
     Files.createDirectories(path.getParent());
+
+    // TODO Work around: https://github.com/marschall/memoryfilesystem/issues/9
     Files.createFile(path);
+
     Files.write(path, content.getBytes(UTF_8));
   }
 }
