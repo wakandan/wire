@@ -26,7 +26,7 @@ public class WireJavaPlugin implements WirePlugin {
   /**
    * A fully-qualified Java class name which will be generated containing a constant list of all
    * extension classes. This list is suitable for passing to
-   * {@link com.squareup.wire.Wire#Wire(List) Wire's constructor} at runtime for constructing its
+   * {@linkplain com.squareup.wire.Wire Wire's constructor} at runtime for constructing its
    * internal extension registry.
    */
   public WireJavaPlugin setRegistryClass(String registryClass) {
