@@ -150,7 +150,7 @@ public final class MessageOptions extends ExtendableMessage<MessageOptions> {
     }
 
     @Override
-    public <E> Builder setExtension(Extension<MessageOptions, E> extension, E value) {
+    public <E> Builder setExtension(Extension<MessageOptions> extension, E value) {
       super.setExtension(extension, value);
       return this;
     }

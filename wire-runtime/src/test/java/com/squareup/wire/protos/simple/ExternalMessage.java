@@ -63,7 +63,7 @@ public final class ExternalMessage extends ExtendableMessage<ExternalMessage> {
     }
 
     @Override
-    public <E> Builder setExtension(Extension<ExternalMessage, E> extension, E value) {
+    public <E> Builder setExtension(Extension<ExternalMessage> extension, E value) {
       super.setExtension(extension, value);
       return this;
     }

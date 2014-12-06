@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.squareup.protoparser.ProtoFile;
 import com.squareup.protoparser.ProtoSchemaParser;
-import com.squareup.protoparser.Type;
+import com.squareup.protoparser.TypeElement;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -226,7 +226,7 @@ public final class WireParser {
       protoFiles.add(protoFile);
 
       // Queue all unseen dependencies to be resolved.
-      for (String dependency : protoFile.getDependencies()) {
+      for (String dependency : protoFile.dependencies()) {
         Path dependencyFile = resolveDependency(proto, directories, dependency);
         if (!seenProtos.contains(dependencyFile)) {
           protoQueue.addLast(dependencyFile);
@@ -262,14 +262,14 @@ public final class WireParser {
     Set<String> types = new LinkedHashSet<>();
 
     // Seed the type resolution queue with all the top-level types from each proto file.
-    Deque<Type> typeQueue = new ArrayDeque<>();
+    Deque<TypeElement> typeQueue = new ArrayDeque<>();
     for (ProtoFile protoFile : protoFiles) {
-      typeQueue.addAll(protoFile.getTypes());
+      typeQueue.addAll(protoFile.typeElements());
     }
 
     while (!typeQueue.isEmpty()) {
-      Type type = typeQueue.removeFirst();
-      String typeFqName = type.getFullyQualifiedName();
+      TypeElement type = typeQueue.removeFirst();
+      String typeFqName = type.qualifiedName();
 
       // Check for fully-qualified type name collisions.
       if (types.contains(typeFqName)) {
@@ -277,14 +277,14 @@ public final class WireParser {
             "Duplicate type " + typeFqName + " defined in " + Joiner.on(", ")
                 .join(Iterables.transform(protoFiles, new Function<ProtoFile, String>() {
                   @Override public String apply(ProtoFile input) {
-                    return input.getFileName();
+                    return input.filePath();
                   }
                 }))
         );
       }
       types.add(typeFqName);
 
-      typeQueue.addAll(type.getNestedTypes());
+      typeQueue.addAll(type.nestedElements());
     }
 
     return ImmutableSet.copyOf(types);

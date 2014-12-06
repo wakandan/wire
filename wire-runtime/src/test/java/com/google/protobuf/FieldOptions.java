@@ -195,7 +195,7 @@ public final class FieldOptions extends ExtendableMessage<FieldOptions> {
     }
 
     @Override
-    public <E> Builder setExtension(Extension<FieldOptions, E> extension, E value) {
+    public <E> Builder setExtension(Extension<FieldOptions> extension, E value) {
       super.setExtension(extension, value);
       return this;
     }

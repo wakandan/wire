@@ -1,18 +1,22 @@
 package com.squareup.wire.compiler.parser;
 
-import com.squareup.protoparser.EnumType;
-import com.squareup.protoparser.MessageType;
+import com.squareup.protoparser.EnumElement;
+import com.squareup.protoparser.FieldElement;
+import com.squareup.protoparser.MessageElement;
+import com.squareup.protoparser.OneOfElement;
 import com.squareup.protoparser.ProtoFile;
-import com.squareup.protoparser.Service;
-import com.squareup.protoparser.Type;
+import com.squareup.protoparser.RpcElement;
+import com.squareup.protoparser.ServiceElement;
+import com.squareup.protoparser.TypeElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.squareup.protoparser.ScalarTypes.isScalarType;
+import static com.squareup.protoparser.Scalars.isScalarType;
 
 /**
  * Filter a set of proto file objects to only include the specified types and their transitive
@@ -47,12 +51,12 @@ final class RootsFilter {
     return rootNode.collectKeptNodes(nodesToKeep);
   }
 
-  private static Node<?> nodeForType(Node<?> parent, Type type) {
-    if (type instanceof MessageType) {
-      return new MessageTypeNode(parent, (MessageType) type);
+  private static Node<?> nodeForType(Node<?> parent, TypeElement type) {
+    if (type instanceof MessageElement) {
+      return new MessageTypeNode(parent, (MessageElement) type);
     }
-    if (type instanceof EnumType) {
-      return new EnumTypeNode(parent, (EnumType) type);
+    if (type instanceof EnumElement) {
+      return new EnumTypeNode(parent, (EnumElement) type);
     }
     throw new IllegalArgumentException("Unknown type " + type.getClass().getCanonicalName());
   }
@@ -123,62 +127,62 @@ final class RootsFilter {
     ProtoFileNode(RootNode parent, ProtoFile protoFile) {
       super(parent, null, protoFile);
 
-      for (Type type : protoFile.getTypes()) {
+      for (TypeElement type : protoFile.typeElements()) {
         children.add(nodeForType(this, type));
       }
-      for (Service service : protoFile.getServices()) {
+      for (ServiceElement service : protoFile.services()) {
         children.add(new ServiceNode(this, service));
       }
     }
 
     @Override ProtoFile collectKeptNodes(Set<Node<?>> typesToKeep) {
-      List<Type> markedTypes = new ArrayList<>();
-      List<Service> markedServices = new ArrayList<>();
+      List<TypeElement> markedTypes = new ArrayList<>();
+      List<ServiceElement> markedServices = new ArrayList<>();
       for (Node<?> child : children) {
         if (typesToKeep.contains(child)) {
           if (child instanceof ServiceNode) {
-            markedServices.add((Service) child.collectKeptNodes(typesToKeep));
+            markedServices.add((ServiceElement) child.collectKeptNodes(typesToKeep));
           } else {
-            markedTypes.add((Type) child.collectKeptNodes(typesToKeep));
+            markedTypes.add((TypeElement) child.collectKeptNodes(typesToKeep));
           }
         }
       }
-      return new ProtoFile(obj.getFileName(), obj.getPackageName(), obj.getDependencies(),
-          obj.getPublicDependencies(), markedTypes, markedServices, obj.getOptions(),
-          obj.getExtendDeclarations());
+      return ProtoFile.create(obj.filePath(), obj.packageName(), obj.dependencies(),
+          obj.publicDependencies(), markedTypes, markedServices, obj.extendDeclarations(),
+          obj.options());
     }
   }
 
-  private static class ServiceNode extends Node<Service> {
-    ServiceNode(Node<?> parent, Service type) {
-      super(parent, type.getFullyQualifiedName(), type);
+  private static class ServiceNode extends Node<ServiceElement> {
+    ServiceNode(Node<?> parent, ServiceElement type) {
+      super(parent, type.qualifiedName(), type);
     }
 
     @Override void keepNodes(Set<Node<?>> typesToKeep, Map<String, Node<?>> nodeMap) {
       super.keepNodes(typesToKeep, nodeMap);
 
-      for (Service.Method method : obj.getMethods()) {
-        String requestType = method.getRequestType();
+      for (RpcElement method : obj.rpcs()) {
+        String requestType = method.requestType();
         if (!isScalarType(requestType)) {
           nodeMap.get(requestType).keepNodes(typesToKeep, nodeMap);
         }
-        String responseType = method.getResponseType();
+        String responseType = method.responseType();
         if (!isScalarType(responseType)) {
           nodeMap.get(responseType).keepNodes(typesToKeep, nodeMap);
         }
       }
     }
 
-    @Override Service collectKeptNodes(Set<Node<?>> typesToKeep) {
+    @Override ServiceElement collectKeptNodes(Set<Node<?>> typesToKeep) {
       return obj; // No child types that could possibly be filtered. Return the original.
     }
   }
 
-  private static class MessageTypeNode extends Node<MessageType> {
-    MessageTypeNode(Node<?> parent, MessageType type) {
-      super(parent, type.getFullyQualifiedName(), type);
+  private static class MessageTypeNode extends Node<MessageElement> {
+    MessageTypeNode(Node<?> parent, MessageElement type) {
+      super(parent, type.qualifiedName(), type);
 
-      for (Type nestedType : type.getNestedTypes()) {
+      for (TypeElement nestedType : type.nestedElements()) {
         children.add(nodeForType(this, nestedType));
       }
     }
@@ -186,32 +190,33 @@ final class RootsFilter {
     @Override void keepNodes(Set<Node<?>> typesToKeep, Map<String, Node<?>> nodeMap) {
       super.keepNodes(typesToKeep, nodeMap);
 
-      for (MessageType.Field field : obj.getFields()) {
-        String fieldType = field.getType();
+      for (FieldElement field : obj.fields()) {
+        String fieldType = field.type();
         if (!isScalarType(fieldType)) {
           nodeMap.get(fieldType).keepNodes(typesToKeep, nodeMap);
         }
       }
     }
 
-    @Override MessageType collectKeptNodes(Set<Node<?>> typesToKeep) {
-      List<Type> markedNestedTypes = new ArrayList<>();
+    @Override MessageElement collectKeptNodes(Set<Node<?>> typesToKeep) {
+      List<TypeElement> markedNestedTypes = new ArrayList<>();
       for (Node<?> child : children) {
         if (typesToKeep.contains(child)) {
-          markedNestedTypes.add((Type) child.collectKeptNodes(typesToKeep));
+          markedNestedTypes.add((TypeElement) child.collectKeptNodes(typesToKeep));
         }
       }
-      return new MessageType(obj.getName(), obj.getFullyQualifiedName(), obj.getDocumentation(),
-          obj.getFields(), markedNestedTypes, obj.getExtensions(), obj.getOptions());
+      return MessageElement.create(obj.name(), obj.qualifiedName(), obj.documentation(),
+          obj.fields(), Collections.<OneOfElement>emptyList(), markedNestedTypes, obj.extensions(),
+          obj.options());
     }
   }
 
-  private static class EnumTypeNode extends Node<EnumType> {
-    EnumTypeNode(Node<?> parent, EnumType type) {
-      super(parent, type.getFullyQualifiedName(), type);
+  private static class EnumTypeNode extends Node<EnumElement> {
+    EnumTypeNode(Node<?> parent, EnumElement type) {
+      super(parent, type.qualifiedName(), type);
     }
 
-    @Override EnumType collectKeptNodes(Set<Node<?>> typesToKeep) {
+    @Override EnumElement collectKeptNodes(Set<Node<?>> typesToKeep) {
       return obj; // No child types that could possibly be filtered. Return the original.
     }
   }

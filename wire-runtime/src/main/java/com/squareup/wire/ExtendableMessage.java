@@ -37,15 +37,15 @@ public abstract class ExtendableMessage<T extends ExtendableMessage<?>> extends 
   protected void setBuilder(ExtendableBuilder<T> builder) {
     super.setBuilder(builder);
     if (builder.extensionMap != null) {
-      this.extensionMap = new ExtensionMap<T>(builder.extensionMap);
+      this.extensionMap = new ExtensionMap<>(builder.extensionMap);
     }
   }
 
   /**
    * Returns an immutable list of the extensions on this message in tag order.
    */
-  public List<Extension<T, ?>> getExtensions() {
-    return extensionMap == null ? Collections.<Extension<T, ?>>emptyList()
+  public List<Extension<T>> getExtensions() {
+    return extensionMap == null ? Collections.<Extension<T>>emptyList()
         : extensionMap.getExtensions();
   }
 
@@ -53,8 +53,8 @@ public abstract class ExtendableMessage<T extends ExtendableMessage<?>> extends 
    * Returns the value for {@code extension} on this message, or null if no
    * value is set.
    */
-  public <E> E getExtension(Extension<T, E> extension) {
-    return extensionMap == null ? null : extensionMap.get(extension);
+  public <E> E getExtension(Extension<T> extension) {
+    return extensionMap == null ? null : extensionMap.<E>get(extension);
   }
 
   /**
@@ -97,7 +97,7 @@ public abstract class ExtendableMessage<T extends ExtendableMessage<?>> extends 
     protected ExtendableBuilder(ExtendableMessage<T> message) {
       super(message);
       if (message != null && message.extensionMap != null) {
-        this.extensionMap = new ExtensionMap<T>(message.extensionMap);
+        this.extensionMap = new ExtensionMap<>(message.extensionMap);
       }
     }
 
@@ -105,16 +105,16 @@ public abstract class ExtendableMessage<T extends ExtendableMessage<?>> extends 
      * Returns the value for {@code extension} on this message, or null if no
      * value is set.
      */
-    public <E> E getExtension(Extension<T, E> extension) {
-      return extensionMap == null ? null : extensionMap.get(extension);
+    public <E> E getExtension(Extension<T> extension) {
+      return extensionMap == null ? null : extensionMap.<E>get(extension);
     }
 
     /**
      * Sets the value of {@code extension} on this builder to {@code value}.
      */
-    public <E> ExtendableBuilder<T> setExtension(Extension<T, E> extension, E value) {
+    public <E> ExtendableBuilder<T> setExtension(Extension<T> extension, E value) {
       if (extensionMap == null) {
-        extensionMap = new ExtensionMap<T>(extension, value);
+        extensionMap = new ExtensionMap<>(extension, value);
       } else {
         extensionMap.put(extension, value);
       }

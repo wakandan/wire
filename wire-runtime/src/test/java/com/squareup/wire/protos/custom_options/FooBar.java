@@ -198,7 +198,7 @@ public final class FooBar extends ExtendableMessage<FooBar> {
     }
 
     @Override
-    public <E> Builder setExtension(Extension<FooBar, E> extension, E value) {
+    public <E> Builder setExtension(Extension<FooBar> extension, E value) {
       super.setExtension(extension, value);
       return this;
     }

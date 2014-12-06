@@ -35,7 +35,7 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
   private int size;
 
   /** Constructs an ExtensionMap with a single value. */
-  public <E> ExtensionMap(Extension<T, E> extension, E value) {
+  public <E> ExtensionMap(Extension<T> extension, E value) {
     data = new Object[2 * INITIAL_SIZE];
     data[0] = extension;
     data[1] = value;
@@ -53,11 +53,11 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
   }
 
   @SuppressWarnings("unchecked")
-  public Extension<T, ?> getExtension(int index) {
+  public Extension<T> getExtension(int index) {
     if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException("" + index);
     }
-    return (Extension<T, ?>) data[index];
+    return (Extension<T>) data[index];
   }
 
   public Object getExtensionValue(int index) {
@@ -71,10 +71,10 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
    * Returns a {@link List} of {@link Extension}s in this map in tag order.
    */
   @SuppressWarnings("unchecked")
-  public List<Extension<T, ?>> getExtensions() {
-    List<Extension<T, ?>> keyList = new ArrayList<Extension<T, ?>>(size);
+  public List<Extension<T>> getExtensions() {
+    List<Extension<T>> keyList = new ArrayList<Extension<T>>(size);
     for (int i = 0; i < size; i++) {
-      keyList.add((Extension<T, ?>) data[i]);
+      keyList.add((Extension<T>) data[i]);
     }
     return Collections.unmodifiableList(keyList);
   }
@@ -86,7 +86,7 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
    * @return a value of type E, or null
    */
   @SuppressWarnings("unchecked")
-  public <E> E get(Extension<T, E> extension) {
+  public <E> E get(Extension<T> extension) {
     int index = Arrays.binarySearch(data, 0, size, extension);
     return index < 0 ? null : (E) data[size + index];
   }
@@ -97,7 +97,7 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
    * @param value a non-null value of type E
    * @param <E> the (boxed) Java data type of the {@link Extension} value
    */
-  public <E> void put(Extension<T, E> extension, E value) {
+  public <E> void put(Extension<T> extension, E value) {
     int index = Arrays.binarySearch(data, 0, size, extension);
     if (index >= 0) {
       data[size + index] = value;
@@ -106,7 +106,7 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
     }
   }
 
-  private <E> void insert(Extension<T, E> key, E value, int insertionPoint) {
+  private <E> void insert(Extension<T> key, E value, int insertionPoint) {
     // Grow the array and copy over the initial segment if necessary.
     Object[] dest = data;
     if (data.length < 2 * (size + 1)) {
@@ -179,7 +179,7 @@ final class ExtensionMap<T extends ExtendableMessage<?>> {
     String sep = "";
     for (int i = 0; i < size; i++) {
       sb.append(sep);
-      sb.append(((Extension<T, ?>) data[i]).getTag());
+      sb.append(((Extension<T>) data[i]).getTag());
       sb.append("=");
       sb.append(data[size + i]);
       sep = ", ";

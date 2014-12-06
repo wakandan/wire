@@ -20,20 +20,18 @@ import java.util.Map;
 
 final class ExtensionRegistry {
 
-  private final Map<Class<? extends ExtendableMessage>, Map<Integer, Extension<?, ?>>>
-      extensionsByTag = new LinkedHashMap<Class<? extends ExtendableMessage>,
-                Map<Integer, Extension<?, ?>>>();
-  private final Map<Class<? extends ExtendableMessage>, Map<String, Extension<?, ?>>>
-      extensionsByName = new LinkedHashMap<Class<? extends ExtendableMessage>,
-          Map<String, Extension<?, ?>>>();
+  private final Map<Class<? extends ExtendableMessage>, Map<Integer, Extension<?>>>
+      extensionsByTag = new LinkedHashMap<>();
+  private final Map<Class<? extends ExtendableMessage>, Map<String, Extension<?>>>
+      extensionsByName = new LinkedHashMap<>();
 
-  public <T extends ExtendableMessage<?>, E> void add(Extension<T, E> extension) {
+  public <T extends ExtendableMessage<?>> void add(Extension<T> extension) {
     Class<? extends ExtendableMessage<?>> messageClass = extension.getExtendedType();
-    Map<Integer, Extension<?, ?>> tagMap = extensionsByTag.get(messageClass);
-    Map<String, Extension<?, ?>> nameMap = extensionsByName.get(messageClass);
+    Map<Integer, Extension<?>> tagMap = extensionsByTag.get(messageClass);
+    Map<String, Extension<?>> nameMap = extensionsByName.get(messageClass);
     if (tagMap == null) {
-      tagMap = new LinkedHashMap<Integer, Extension<?, ?>>();
-      nameMap = new LinkedHashMap<String, Extension<?, ?>>();
+      tagMap = new LinkedHashMap<>();
+      nameMap = new LinkedHashMap<>();
       extensionsByTag.put(messageClass, tagMap);
       extensionsByName.put(messageClass, nameMap);
     }
@@ -42,16 +40,16 @@ final class ExtensionRegistry {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends ExtendableMessage<?>, E> Extension<T, E>
-      getExtension(Class<T> messageClass, int tag) {
-    Map<Integer, Extension<?, ?>> map = extensionsByTag.get(messageClass);
-    return map == null ? null : (Extension<T, E>) map.get(tag);
+  public <T extends ExtendableMessage<?>> Extension<T> getExtension(
+      Class<T> messageClass, int tag) {
+    Map<Integer, Extension<?>> map = extensionsByTag.get(messageClass);
+    return map == null ? null : (Extension<T>) map.get(tag);
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends ExtendableMessage<?>, E> Extension<T, E>
+  public <T extends ExtendableMessage<?>> Extension<T>
       getExtension(Class<T> messageClass, String name) {
-    Map<String, Extension<?, ?>> nameMap = extensionsByName.get(messageClass);
-    return nameMap == null ? null : (Extension<T, E>) nameMap.get(name);
+    Map<String, Extension<?>> nameMap = extensionsByName.get(messageClass);
+    return nameMap == null ? null : (Extension<T>) nameMap.get(name);
   }
 }

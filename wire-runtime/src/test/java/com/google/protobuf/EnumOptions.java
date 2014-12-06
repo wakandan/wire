@@ -71,7 +71,7 @@ public final class EnumOptions extends ExtendableMessage<EnumOptions> {
     }
 
     @Override
-    public <E> Builder setExtension(Extension<EnumOptions, E> extension, E value) {
+    public <E> Builder setExtension(Extension<EnumOptions> extension, E value) {
       super.setExtension(extension, value);
       return this;
     }

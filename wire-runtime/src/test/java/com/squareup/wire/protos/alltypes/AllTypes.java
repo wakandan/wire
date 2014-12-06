@@ -1207,7 +1207,7 @@ public final class AllTypes extends ExtendableMessage<AllTypes> {
     }
 
     @Override
-    public <E> Builder setExtension(Extension<AllTypes, E> extension, E value) {
+    public <E> Builder setExtension(Extension<AllTypes> extension, E value) {
       super.setExtension(extension, value);
       return this;
     }

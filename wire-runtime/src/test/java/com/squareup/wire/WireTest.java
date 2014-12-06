@@ -157,7 +157,7 @@ public class WireTest {
         fooext));
     assertEquals(new Integer(333), msg.optional_external_msg.getExtension(barext));
     assertEquals(new Integer(222), msg.optional_external_msg.getExtension(bazext));
-    assertEquals(new Integer(77), msg.optional_external_msg.getExtension(nested_message_ext).bb);
+    assertEquals(new Integer(77), msg.optional_external_msg.<SimpleMessage.NestedMessage>getExtension(nested_message_ext).bb);
     assertEquals(SimpleMessage.NestedEnum.BAZ, msg.optional_external_msg.getExtension(
         Ext_simple_message.nested_enum_ext));
 

@@ -342,7 +342,7 @@ public class TestAllTypes {
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_rep_bool));
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_pack_bool));
 
-    List<Extension<AllTypes, ?>> extensions = parsed.getExtensions();
+    List<Extension<AllTypes>> extensions = parsed.getExtensions();
     assertEquals(3, extensions.size());
     assertTrue(extensions.contains(Ext_all_types.ext_opt_bool));
     assertTrue(extensions.contains(Ext_all_types.ext_rep_bool));
@@ -360,7 +360,7 @@ public class TestAllTypes {
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_rep_bool));
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_pack_bool));
 
-    List<Extension<AllTypes, ?>> extensions = parsed.getExtensions();
+    List<Extension<AllTypes>> extensions = parsed.getExtensions();
     assertEquals(3, extensions.size());
     assertTrue(extensions.contains(Ext_all_types.ext_opt_bool));
     assertTrue(extensions.contains(Ext_all_types.ext_rep_bool));
@@ -380,7 +380,7 @@ public class TestAllTypes {
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_rep_bool));
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_pack_bool));
 
-    List<Extension<AllTypes, ?>> extensions = parsed.getExtensions();
+    List<Extension<AllTypes>> extensions = parsed.getExtensions();
     assertEquals(3, extensions.size());
     assertTrue(extensions.contains(Ext_all_types.ext_opt_bool));
     assertTrue(extensions.contains(Ext_all_types.ext_rep_bool));
@@ -400,7 +400,7 @@ public class TestAllTypes {
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_rep_bool));
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_pack_bool));
 
-    List<Extension<AllTypes, ?>> extensions = parsed.getExtensions();
+    List<Extension<AllTypes>> extensions = parsed.getExtensions();
     assertEquals(3, extensions.size());
     assertTrue(extensions.contains(Ext_all_types.ext_opt_bool));
     assertTrue(extensions.contains(Ext_all_types.ext_rep_bool));
@@ -421,7 +421,7 @@ public class TestAllTypes {
     assertEquals(list(true, 50), allTypes.getExtension(Ext_all_types.ext_rep_bool));
     assertEquals(list(true, 50), allTypes.getExtension(Ext_all_types.ext_pack_bool));
 
-    List<Extension<AllTypes, ?>> extensions = parsed.getExtensions();
+    List<Extension<AllTypes>> extensions = parsed.getExtensions();
     assertEquals(3, extensions.size());
     assertTrue(extensions.contains(Ext_all_types.ext_opt_bool));
     assertTrue(extensions.contains(Ext_all_types.ext_rep_bool));
@@ -469,7 +469,7 @@ public class TestAllTypes {
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_rep_bool));
     assertEquals(list(true), allTypes.getExtension(Ext_all_types.ext_pack_bool));
 
-    List<Extension<AllTypes, ?>> extensions = parsed.getExtensions();
+    List<Extension<AllTypes>> extensions = parsed.getExtensions();
     assertEquals(3, extensions.size());
     assertTrue(extensions.contains(Ext_all_types.ext_opt_bool));
     assertTrue(extensions.contains(Ext_all_types.ext_rep_bool));

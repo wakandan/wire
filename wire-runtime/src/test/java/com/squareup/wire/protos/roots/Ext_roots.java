@@ -9,7 +9,7 @@ public final class Ext_roots {
   private Ext_roots() {
   }
 
-  public static final Extension<I, J> j = Extension
+  public static final Extension<I> j = Extension
       .messageExtending(J.class, I.class)
       .setName("squareup.protos.roots.j")
       .setTag(1000)

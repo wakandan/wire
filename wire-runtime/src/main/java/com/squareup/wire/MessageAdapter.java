@@ -262,7 +262,7 @@ final class MessageAdapter<M extends Message> {
   private <T extends ExtendableMessage<?>> int getExtensionsSerializedSize(ExtensionMap<T> map) {
     int size = 0;
     for (int i = 0; i < map.size(); i++) {
-      Extension<T, ?> extension = map.getExtension(i);
+      Extension<T> extension = map.getExtension(i);
       Object value = map.getExtensionValue(i);
       int tag = extension.getTag();
       Datatype datatype = extension.getDatatype();
@@ -341,7 +341,7 @@ final class MessageAdapter<M extends Message> {
   private <T extends ExtendableMessage<?>> void writeExtensions(WireOutput output,
       ExtensionMap<T> extensionMap) throws IOException {
     for (int i = 0; i < extensionMap.size(); i++) {
-      Extension<T, ?> extension = extensionMap.getExtension(i);
+      Extension<T> extension = extensionMap.getExtension(i);
       Object value = extensionMap.getExtensionValue(i);
       int tag = extension.getTag();
       Datatype datatype = extension.getDatatype();
@@ -554,7 +554,7 @@ final class MessageAdapter<M extends Message> {
       Storage storage = new Storage();
 
       while (true) {
-        Extension<?, ?> extension = null;
+        Extension<?> extension = null;
         int tagAndType = input.readTag();
         int tag = tagAndType >> WireType.TAG_TYPE_BITS;
         WireType wireType = WireType.valueOf(tagAndType);
@@ -708,7 +708,7 @@ final class MessageAdapter<M extends Message> {
     Class<Message> messageClass = fieldInfo == null
         ? null : (Class<Message>) fieldInfo.messageType;
     if (messageClass == null) {
-      Extension<ExtendableMessage<?>, ?> extension = getExtension(tag);
+      Extension<ExtendableMessage<?>> extension = getExtension(tag);
       if (extension != null) {
         messageClass = (Class<Message>) extension.getMessageType();
       }
@@ -768,21 +768,21 @@ final class MessageAdapter<M extends Message> {
   }
 
   @SuppressWarnings("unchecked")
-  private Extension<ExtendableMessage<?>, ?> getExtension(int tag) {
+  private Extension<ExtendableMessage<?>> getExtension(int tag) {
     ExtensionRegistry registry = wire.registry;
     return registry == null
         ? null : registry.getExtension((Class<ExtendableMessage<?>>) messageType, tag);
   }
 
   @SuppressWarnings("unchecked")
-  Extension<ExtendableMessage<?>, ?> getExtension(String name) {
+  Extension<ExtendableMessage<?>> getExtension(String name) {
     ExtensionRegistry registry = wire.registry;
     return registry == null
         ? null : registry.getExtension((Class<ExtendableMessage<?>>) messageType, name);
   }
 
   @SuppressWarnings("unchecked")
-  private void setExtension(ExtendableMessage.ExtendableBuilder builder, Extension<?, ?> extension,
+  private void setExtension(ExtendableMessage.ExtendableBuilder builder, Extension<?> extension,
       Object value) {
     builder.setExtension(extension, value);
   }
@@ -791,7 +791,7 @@ final class MessageAdapter<M extends Message> {
     FieldInfo fieldInfo = fieldInfoMap.get(tag);
     Class<? extends ProtoEnum> enumType = fieldInfo == null ? null : fieldInfo.enumType;
     if (enumType == null) {
-      Extension<ExtendableMessage<?>, ?> extension = getExtension(tag);
+      Extension<ExtendableMessage<?>> extension = getExtension(tag);
       if (extension != null) {
         enumType = extension.getEnumType();
       }
