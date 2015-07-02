@@ -1,5 +1,10 @@
 package com.squareup.wire;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.google.common.collect.Maps;
 import com.squareup.javawriter.JavaWriter;
 import com.squareup.protoparser.EnumConstantElement;
 import com.squareup.protoparser.EnumElement;
@@ -9,6 +14,7 @@ import com.squareup.protoparser.OneOfElement;
 import com.squareup.protoparser.OptionElement;
 import com.squareup.protoparser.ProtoFile;
 import com.squareup.protoparser.TypeElement;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.lang.model.element.Modifier;
 
 import static com.squareup.wire.WireCompiler.allFields;
@@ -251,6 +258,9 @@ public class MessageWriter {
 
     String name = messageType.name();
     emitDocumentation(writer, messageType.documentation());
+    Map<String, String> ignoreFieldMap = Maps.newLinkedHashMap();
+    ignoreFieldMap.put("ignoreUnknown", "true");
+    writer.emitAnnotation(JsonIgnoreProperties.class, ignoreFieldMap);
     writer.beginType(name, "class", modifiers,
         compiler.hasExtensions(messageType) ? "ExtendableMessage<" + name + ">" : "Message");
     writer.emitField("long", "serialVersionUID", EnumSet.of(PRIVATE, STATIC, FINAL), "0L");
@@ -448,13 +458,16 @@ public class MessageWriter {
       writer.emitEmptyLine();
       emitDocumentation(writer, field.documentation());
       writer.emitAnnotation(ProtoField.class, map);
+      
+      Map<String, String> jsonMap = new LinkedHashMap<String, String>();
+      writer.emitAnnotation(JsonProperty.class, jsonMap);
 
       if (field.isDeprecated()) {
         writer.emitAnnotation(Deprecated.class);
       }
 
       if (FieldInfo.isRepeated(field)) javaName = "List<" + javaName + ">";
-      writer.emitField(javaName, sanitize(field.name()), EnumSet.of(PUBLIC, FINAL));
+      writer.emitField(javaName, sanitize(field.name()), EnumSet.of(PUBLIC));
     }
   }
 
@@ -470,10 +483,18 @@ public class MessageWriter {
     List<String> params = new ArrayList<String>();
     for (FieldElement field : allFields(messageType)) {
       String javaName = getJavaFieldType(messageType, field);
+      StringBuilder annotationBuilder = new StringBuilder();
+      annotationBuilder.append("@");
+      
       params.add(javaName);
       params.add(sanitize(field.name()));
     }
-
+    
+    //empty constructor
+    writer.emitEmptyLine();
+    writer.beginMethod(null, messageType.name(), EnumSet.of(PUBLIC), null, null);
+    writer.endMethod();
+    
     writer.emitEmptyLine();
     writer.beginMethod(null, messageType.name(), EnumSet.of(PUBLIC), params, null);
     for (FieldElement field : allFields(messageType)) {

@@ -35,6 +35,11 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+	  <groupId>io.dropwizard</groupId>
+	  <artifactId>dropwizard-jackson</artifactId>
+	  <version>0.8.1</version>
+	</dependency>
   </dependencies>
 
   <build>
