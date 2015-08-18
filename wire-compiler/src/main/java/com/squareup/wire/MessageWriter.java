@@ -1,19 +1,10 @@
 package com.squareup.wire;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.google.common.collect.Maps;
-import com.squareup.javawriter.JavaWriter;
-import com.squareup.protoparser.EnumConstantElement;
-import com.squareup.protoparser.EnumElement;
-import com.squareup.protoparser.FieldElement;
-import com.squareup.protoparser.MessageElement;
-import com.squareup.protoparser.OneOfElement;
-import com.squareup.protoparser.OptionElement;
-import com.squareup.protoparser.ProtoFile;
-import com.squareup.protoparser.TypeElement;
+import static com.squareup.wire.WireCompiler.allFields;
+import static javax.lang.model.element.Modifier.FINAL;
+import static javax.lang.model.element.Modifier.PRIVATE;
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.Modifier.STATIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,11 +23,18 @@ import java.util.TreeSet;
 
 import javax.lang.model.element.Modifier;
 
-import static com.squareup.wire.WireCompiler.allFields;
-import static javax.lang.model.element.Modifier.FINAL;
-import static javax.lang.model.element.Modifier.PRIVATE;
-import static javax.lang.model.element.Modifier.PUBLIC;
-import static javax.lang.model.element.Modifier.STATIC;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Maps;
+import com.squareup.javawriter.JavaWriter;
+import com.squareup.protoparser.EnumConstantElement;
+import com.squareup.protoparser.EnumElement;
+import com.squareup.protoparser.FieldElement;
+import com.squareup.protoparser.MessageElement;
+import com.squareup.protoparser.OneOfElement;
+import com.squareup.protoparser.OptionElement;
+import com.squareup.protoparser.ProtoFile;
+import com.squareup.protoparser.TypeElement;
 
 public class MessageWriter {
 
@@ -458,7 +456,7 @@ public class MessageWriter {
       writer.emitEmptyLine();
       emitDocumentation(writer, field.documentation());
       writer.emitAnnotation(ProtoField.class, map);
-      
+
       Map<String, String> jsonMap = new LinkedHashMap<String, String>();
       writer.emitAnnotation(JsonProperty.class, jsonMap);
 
@@ -485,16 +483,16 @@ public class MessageWriter {
       String javaName = getJavaFieldType(messageType, field);
       StringBuilder annotationBuilder = new StringBuilder();
       annotationBuilder.append("@");
-      
+
       params.add(javaName);
       params.add(sanitize(field.name()));
     }
-    
+
     //empty constructor
     writer.emitEmptyLine();
     writer.beginMethod(null, messageType.name(), EnumSet.of(PUBLIC), null, null);
     writer.endMethod();
-    
+
     writer.emitEmptyLine();
     writer.beginMethod(null, messageType.name(), EnumSet.of(PUBLIC), params, null);
     for (FieldElement field : allFields(messageType)) {
